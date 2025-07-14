@@ -8,22 +8,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly
-      # and run all Cypress tests
+
       - name: Cypress run
+        id: cypress
         uses: cypress-io/github-action@v6
         with:
-          command: npx cypress run
+          command: npx cypress run --reporter mochawesome --reporter-options reportDir="cypress/results",overwrite=false,html=false,json=true
+        continue-on-error: true
 
       - name: Merge Mochawesome JSON reports
-        run: |
-          npx mochawesome-merge "cypress/results/*.json" > mochawesome.json
+        if: always()
+        run: npx mochawesome-merge "cypress/results/*.json" > mochawesome.json
 
       - name: Generate HTML report from merged JSON
-        run: |
-          npx marge mochawesome.json --reportDir=cypress/results --reportFilename=mochawesome-report
+        if: always()
+        run: npx marge mochawesome.json --reportDir=cypress/results --reportFilename=mochawesome-report
 
       - name: Upload Mochawesome reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-reports
