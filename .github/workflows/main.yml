@@ -12,3 +12,21 @@ jobs:
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        with:
+          command: npx cypress run
+
+      - name: Merge Mochawesome JSON reports
+        run: |
+          npx mochawesome-merge "cypress/results/*.json" > mochawesome.json
+
+      - name: Generate HTML report from merged JSON
+        run: |
+          npx marge mochawesome.json --reportDir=cypress/results --reportFilename=mochawesome-report
+
+      - name: Upload Mochawesome reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-reports
+          path: |
+            mochawesome.json
+            cypress/results/mochawesome-report.html
