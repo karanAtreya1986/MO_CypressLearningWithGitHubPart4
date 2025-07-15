@@ -5,6 +5,13 @@ on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-24.04
+    #how many jobs to run in parallel
+    #if we use containers we need cypress dashboard to know
+    #which jobs run where.
+    strategy:
+      matrix:
+        containers: [1,2,3,4,5]
+        
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -12,7 +19,6 @@ jobs:
       - name: Cypress run
         id: cypress
         uses: cypress-io/github-action@v6
-        #run specific cy file.
         with:
           spec: cypress/e2e/first.cy.js
         continue-on-error: true
@@ -25,5 +31,4 @@ jobs:
         with:
           name: mochawesome-reports
           path: cypress/results/mochawesome-report
-          #how many days report to be saved in artifacts.
           retention-days: 10

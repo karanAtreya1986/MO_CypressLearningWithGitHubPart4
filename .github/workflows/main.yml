@@ -13,14 +13,18 @@ jobs:
         id: cypress
         uses: cypress-io/github-action@v6
         with:
+        #run all the files
           command: npx cypress run
+          #continue even if scripts fail
         continue-on-error: true
 
       
 
       - name: Upload Mochawesome reports
+      #always upload the reports irrespective of pass fail.
         if: always()
         uses: actions/upload-artifact@v4
+        ##report name and path where to upload.
         with:
           name: mochawesome-reports
           path: cypress/results/mochawesome-report
